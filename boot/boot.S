@@ -22,6 +22,14 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
+    xorl    %eax, %eax
+    xorl    %ebx, %ebx
+    xorl    %ecx, %ecx
+    xorl    %edx, %edx
+    xorl    %esi, %esi
+    xorl    %edi, %edi
+    movl    $0x01010101, %eax
+    mov     %eax, %ebx
     mov     $stack_top, %esp
     call    kernel_main
     cli

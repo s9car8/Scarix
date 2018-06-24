@@ -5,16 +5,24 @@
 
 
 #include <stdint.h>
+#include "boot.h"
 
 
 #define MAKE_GDT_ENTRY() \
     ;
 
 
-extern uint8_t terminal_color;
-
 void kernel_main()
 {
+    char buf[50];
+
     terminal_initialize();
-    terminal_putentryat('!', terminal_color, 10, 10);
+
+    // asm("xor %ax, %ax");
+    memcpy(buf, "Hello, kernel world! #%i\n", 26);
+    terminal_puts("================================================================================");
+    // const char* xxx = "XXX";
+    // asm("pushl $3; pushl %0; pushl $1; call memcpy" :: "r" (xxx), "r" (buf));
+    for (int i = 0; i < 30; ++i)
+        terminal_printf(buf, i);
 }

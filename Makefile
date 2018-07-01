@@ -1,5 +1,13 @@
 
-all:
+.PHONY: all
+all: boot
+
+.PHONY: bootloader
+bootloader:
+	make --file bootloader/Makefile build
+
+.PHONY: boot
+boot:
 	make --file boot/Makefile build
 	mv build/krnl.img build/boot/krnl.img
 	grub-file --is-x86-multiboot build/boot/krnl.img || echo the file is not multiboot

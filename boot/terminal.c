@@ -1,7 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdarg.h>
+
 #include "boot.h"
+#include "io_impl.h"
 
 
 enum vga_color
@@ -45,33 +47,13 @@ size_t strlen(const char* str)
     return len;
 }
 
-void reverse(char* str, size_t n)
-{
-    for (size_t i = 0; i < n / 2; ++i)
-        swap(str + i, str + n - 1 - i);
-}
-
-void itoa(char* buf, int x, int p)
-{
-    static const char digits[] =
-        {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    size_t n = 0;
-
-    while (1) {
-        buf[n++] = digits[x % p];
-        x /= p;
-        if (x == 0) break;
-    }
-    reverse(buf, n);
-}
-
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 
 size_t terminal_row;
 size_t terminal_col;
 uint8_t terminal_color;
-volatile uint16_t* terminal_vga_ptr;
+uint16_t* terminal_vga_ptr;
 
 
 void terminal_initialize(void)
@@ -89,8 +71,8 @@ void terminal_initialize(void)
 
 void terminal_shift_buffer(void)
 {
-    static char buf[10];
     size_t len = (VGA_HEIGHT - 1) * VGA_WIDTH;
+
     memcpy(terminal_vga_ptr, terminal_vga_ptr + VGA_WIDTH, sizeof (uint16_t[len]));
     for (size_t i = 0; i < VGA_WIDTH; ++i) terminal_vga_ptr[len + i] = vga_entry(' ', terminal_color);
 }
@@ -107,7 +89,7 @@ void terminal_setcolor(uint8_t color)
     terminal_color = color;
 }
 
-void terminal_putchar(char c)
+int terminal_putchar(int c)
 {
     if (terminal_col == VGA_WIDTH) {
         terminal_col = 0;
@@ -125,44 +107,31 @@ void terminal_putchar(char c)
             terminal_col = 0;
             ++terminal_row;
             break;
+        case '\b':
+            if (terminal_col != 0) --terminal_col;
+            break;
         default:
             terminal_putentryat(c, terminal_color, terminal_row, terminal_col);
             ++terminal_col;
             break;
     }
+    return c;
 }
 
-void terminal_puts(const char* str)
+int terminal_puts(const char* str)
 {
-    for (; *str; ++str) terminal_putchar(*str);
+    puts_impl(terminal_putchar, *str);
 }
 
-void terminal_printf(const char* fmt, ...)
+int terminal_printf(const char* fmt, ...)
 {
-    static char buf[10];
     va_list args;
+    int res;
 
     va_start(args, fmt);
-    for (; *fmt; ++fmt) {
-        int ch = *fmt;
-
-        switch (ch) {
-            case '%':
-                switch (*++fmt) {
-                    case 'i': case 'd':
-                        itoa(buf, va_arg(args, int), 10);
-                        terminal_puts(buf);
-                        break;
-                    case 'x':
-                        itoa(buf, va_arg(args, int), 16);
-                        terminal_puts(buf);
-                        break;
-                }
-                break;
-            default: terminal_putchar(ch);
-        }
-    }
+    res = printf_impl(terminal_putchar, fmt, args);
     va_end(args);
+    return res;
 }
 
 // __attribute__((force_align_arg_pointer))

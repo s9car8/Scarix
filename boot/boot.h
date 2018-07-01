@@ -16,6 +16,9 @@ extern void memset(void* dest, char c, size_t n);
 
 // VGA termianl interface.
 void terminal_initialize(void);
-void terminal_puts(const char* str);
-void terminal_printf(const char* fmt, ...);
+int terminal_putchar(int);
+int terminal_puts(const char* str);
+int terminal_printf(const char* fmt, ...);
 void terminal_print_regs(void);
+
+#include "io_impl.h"

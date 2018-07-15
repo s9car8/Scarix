@@ -1,0 +1,16 @@
+
+# Just adds cmd prefix.
+# Usage: $(call cmd,ld)
+# Result: $(cmd_ld)
+cmd = $(cmd_$(1))
+
+#
+cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
+
+cmd_ld  = $(CC) $(LDFLAGS) $(LDFLAGS_$(@F)) $^ -o $@
+
+cmd_cc  = $(CC) $(CFLAGS) -c -o $@ $<
+
+cmd_as  = $(AS) $(AFLAGS) -c -o $@ $<
+
+build   = -f $(SRCPATH)/scripts/Makefile.build obj

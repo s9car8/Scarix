@@ -2,8 +2,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#include "boot.h"
-
+#include "global.h"
 
 
 void reverse(char* str, size_t n)

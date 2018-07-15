@@ -5,6 +5,7 @@
 
 
 #include <stdint.h>
+
 #include "boot.h"
 
 
@@ -99,20 +100,12 @@ void kernel_main()
 {
     terminal_initialize();
 
-    // for (int i = 0; i < 30; ++i)
-    //     terminal_printf("Hello, kernel world! #%i\n", i);
-
-    // unsigned i;
-    // uint32_t* ptr;
-
-    // for (ptr = 0, i = 0; i < 25; ++ptr, ++i) {
-    //     terminal_printf("%i: %x\n", i, *ptr);
+    // while (1) {
+    //     // terminal_printf("%i : %x\n", i++, get_scancode());
+    //     terminal_printf("%c", getchar());
     // }
 
-    unsigned i = 0;
-
-    while (1) {
-        // terminal_printf("%i : %x\n", i++, get_scancode());
-        terminal_printf("%c", getchar());
+    for (int i = 0; i < 30; ++i) {
+        terminal_printf("Hello, kernel world! #%i\n", i);
     }
 }

@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 #include "boot.h"
-#include "io_impl.h"
+#include "lib/io_impl.h"
 
 
 enum vga_color
@@ -120,7 +120,7 @@ int terminal_putchar(int c)
 
 int terminal_puts(const char* str)
 {
-    puts_impl(terminal_putchar, *str);
+    puts_impl(terminal_putchar, str);
 }
 
 int terminal_printf(const char* fmt, ...)

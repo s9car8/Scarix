@@ -1,0 +1,22 @@
+---
+29.06.2018
+---
+- Video initialization.
+- GDT initialization.
+- Enable paging.
+
+6.07.2018
+---
+- Read Chapter 8, 9 of Intel manual part 3A.
+- Read Chapter about GDT, LDT and paging of Intel manual part 3A.
+- Implement GDT initialization.
+- Implement paging.
+- Implement ELF process loading.
+- Implement per-processor scheduler.
+
+9(10).07.2018
+---
+- Make first steps in deep OS development (GDT etc).
+- Finitely setup ./**/Makefile to build and run this OS with QEMU.
+- Implement debug-info/log terminal.
+- Paging.

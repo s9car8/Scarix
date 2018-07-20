@@ -166,3 +166,43 @@ void terminal_print_regs(void)
 
     asm("pop %edx; pop %ecx; pop %eax");
 }
+
+void terminal_print_sregs()
+{
+    register uint32_t ebx asm("ebx");
+
+    asm("movw %%cs, %0" : "=r" (ebx));
+    terminal_printf("CS: 0x%x\n", ebx);
+
+    asm("movw %%ds, %0" : "=r" (ebx));
+    terminal_printf("DS: 0x%x\n", ebx);
+
+    asm("movw %%es, %0" : "=r" (ebx));
+    terminal_printf("ES: 0x%x\n", ebx);
+
+    asm("movw %%fs, %0" : "=r" (ebx));
+    terminal_printf("FS: 0x%x\n", ebx);
+
+    asm("movw %%gs, %0" : "=r" (ebx));
+    terminal_printf("GS: 0x%x\n", ebx);
+
+    asm("movw %%ss, %0" : "=r" (ebx));
+    terminal_printf("SS: 0x%x\n", ebx);
+}
+
+void terminal_print_cr()
+{
+    u32 cr0;
+    // u32 cr1;
+    // u32 cr2;
+    // u32 cr3;
+
+    asm volatile("movl %%cr0, %%eax; movl %%eax, %0" : "=r"(cr0));
+    // asm volatile("movl %%cr1, %%eax; movl %%eax, %0" : "=r"(cr1));
+    // asm volatile("movl %%cr2, %%eax; movl %%eax, %0" : "=r"(cr2));
+    // asm volatile("movl %%cr3, %%eax; movl %%eax, %0" : "=r"(cr3));
+    terminal_printf("CR0: 0x%x\n", cr0);
+    // terminal_printf("CR1: 0x%x\n", cr1);
+    // terminal_printf("CR2: 0x%x\n", cr2);
+    // terminal_printf("CR3: 0x%x\n", cr3);
+}

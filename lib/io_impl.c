@@ -51,7 +51,7 @@ int printf_impl(int (*putchar)(int), const char* fmt, va_list args)
                         break;
                     case 'x':
                         itoa(buf, va_arg(args, unsigned), 16);
-                        puts_impl(putchar, "0x");
+                        // puts_impl(putchar, "0x");
                         puts_impl(putchar, buf);
                         break;
                     case 'c':

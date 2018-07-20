@@ -15,6 +15,7 @@ NATIVE_ARCH := $(shell uname -m | sed -e s/x86_64/x86/)
 ARCH 		?= $(NATIVE_ARCH)
 
 CONFIG_CROSS_COMPILE 	:= ~/opt/cross-gcc/bin/i686-elf-
+# CONFIG_CROSS_COMPILE 	:= ~/opt/cross-gcc/bin/x86_64-elf-
 CROSS_COMPILE			:= $(CONFIG_CROSS_COMPILE)
 
 # Make build variables.
@@ -48,6 +49,11 @@ KERNELINCLUDE 	:= \
 
 export KERNELINCLUDE
 
+
+CFLAGS += -DCONFIG_USE_MULTIBOOT
+AFLAGS += -DCONFIG_USE_MULTIBOOT
+
+export CFLAGS AFLAGS LDFLAGS OBJCOPYFLAGS
 
 # include $(SRCPATH)/arch/$(ARCH)/boot/Makefile
 
@@ -107,7 +113,8 @@ $(obj)/os.iso: $(obj)/kernel_boot.bin
 
 .PHONY: test
 test: $(obj)/os.iso
-	qemu-system-i386 -cdrom $(obj)/os.iso
+	# Use x86_64 version fo QEMU to emulate amd64 processor architecture.
+	qemu-system-x86_64 -cdrom $(obj)/os.iso
 
 .PHONY: debug
 .ONESHELL:

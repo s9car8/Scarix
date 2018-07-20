@@ -28,9 +28,9 @@ _start:
     xorl    %edx, %edx
     xorl    %esi, %esi
     xorl    %edi, %edi
-    movl    $0x01010101, %eax
-    mov     %eax, %ebx
+
     mov     $stack_top, %esp
+    cli
     call    kernel_main
     cli
 1:  hlt

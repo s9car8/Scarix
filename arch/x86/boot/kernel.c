@@ -96,7 +96,7 @@ char getchar()
 }
 
 
-void kernel_main()
+void kernel_main(void)
 {
     terminal_initialize();
 
@@ -105,7 +105,15 @@ void kernel_main()
     //     terminal_printf("%c", getchar());
     // }
 
-    for (int i = 0; i < 30; ++i) {
-        terminal_printf("Hello, kernel world! #%i\n", i);
-    }
+    // @Note: When we disable PE flag in CR0 register, we go to real mode.
+    // To access data in this mode everything of them must be located BELOW 1M.
+    // asm("mov %cr0, %eax; andl $~0x1, %eax; mov %eax, %cr0");
+
+    go_to_protected_mode();
+}
+
+
+void kernel_main_pm()
+{
+    while (1) terminal_printf("%c", getchar());
 }

@@ -1,16 +1,40 @@
-CFLAGS := -g -std=gnu99
+
+# Local targets flags.
+# ---------------------
+
+# Specify to use GNU GCC version with C99 standard.
+CFLAGS += -std=gnu99
+
 CFLAGS += -ffreestanding
+
+# Instruct GCC not to use interrupt unsafe 'red zones'.
+CFLAGS += -mno-red-zone
+
+# Disable SSE floating point ops. To protect from #UD and #NM exceptions.
+CFLAGS += -mno-sse
+
 CFLAGS += $(KERNELINCLUDE)
 
-LDFLAGS	:= -shared -ffreestanding -nostdlib
+# Enalbe debug stuff.
+CFLAGS += -g3
+
+LDFLAGS	:= -shared -nostdlib -g3
+
+# Don't embed an OS specific CRT.
+LDFLAGS += -ffreestanding
+
 
 obj		:= $(OBJPATH)/boot
 
-boot-objs := boot.o kernel.o terminal.o memory.o io_impl.o
+boot-objs := boot.o kernel.o gdt.o pm.o pmjump.o memory.o terminal.o
+boot-objs += io_impl.o
 boot-objs := $(addprefix $(obj)/, $(boot-objs))
 
 include $(SRCPATH)/scripts/Kbuild.include
 
+
+src-arch-boot := $(SRCPATH)/arch/x86/boot
+src-arch-lib := $(SRCPATH)/arch/x86/lib
 
 OBJCOPYFLAGS_kernel_boot.bin := #-O binary
 $(OBJPATH)/kernel_boot.bin: $(OBJPATH)/kernel_boot.elf
@@ -18,19 +42,28 @@ $(OBJPATH)/kernel_boot.bin: $(OBJPATH)/kernel_boot.elf
 	# cp $< $@
 
 LDFLAGS_kernel_boot.elf := -T
-$(OBJPATH)/kernel_boot.elf: $(SRCPATH)/arch/x86/boot/setup.ld $(boot-objs)
+$(OBJPATH)/kernel_boot.elf: $(src-arch-boot)/setup.ld $(boot-objs)
 	$(call cmd,ld)
 
-$(obj)/boot.o: $(SRCPATH)/arch/x86/boot/boot.S
+$(obj)/boot.o: $(src-arch-boot)/boot.S
 	$(call cmd,cc)
 
-$(obj)/kernel.o: $(SRCPATH)/arch/x86/boot/kernel.c
+$(obj)/kernel.o: $(src-arch-boot)/kernel.c
 	$(call cmd,cc)
 
-$(obj)/terminal.o: $(SRCPATH)/arch/x86/boot/terminal.c
+$(obj)/gdt.o: $(src-arch-boot)/gdt.c
 	$(call cmd,cc)
 
-$(obj)/memory.o: $(SRCPATH)/arch/x86/lib/memory.S
+$(obj)/pm.o: $(src-arch-boot)/pm.c
+	$(call cmd,cc)
+
+$(obj)/pmjump.o: $(src-arch-boot)/pmjump.S
+	$(call cmd,cc)
+
+$(obj)/memory.o: $(src-arch-lib)/memory.S
+	$(call cmd,cc)
+
+$(obj)/terminal.o: $(src-arch-boot)/terminal.c
 	$(call cmd,cc)
 
 $(obj)/io_impl.o: $(SRCPATH)/lib/io_impl.c

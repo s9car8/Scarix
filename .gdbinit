@@ -1,4 +1,4 @@
 target remote localhost:1234
 layout regs
-symbol-file iso/boot/kernel_boot.bin
-b _start
+symbol-file ./kernel_boot.elf
+b jump_to_protected_mode

@@ -26,7 +26,7 @@ LDFLAGS += -ffreestanding
 
 obj		:= $(OBJPATH)/boot
 
-boot-objs := boot.o kernel.o gdt.o pm.o pmjump.o memory.o terminal.o
+boot-objs := boot.o kernel.o gdt.o pm.o pmjump.o pm_boot.o memory.o terminal.o
 boot-objs += io_impl.o
 boot-objs := $(addprefix $(obj)/, $(boot-objs))
 
@@ -58,6 +58,9 @@ $(obj)/pm.o: $(src-arch-boot)/pm.c
 	$(call cmd,cc)
 
 $(obj)/pmjump.o: $(src-arch-boot)/pmjump.S
+	$(call cmd,cc)
+
+$(obj)/pm_boot.o: $(src-arch-boot)/pm_boot.S
 	$(call cmd,cc)
 
 $(obj)/memory.o: $(src-arch-lib)/memory.S

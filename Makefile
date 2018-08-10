@@ -36,6 +36,11 @@ else
   $(info :!: Auto-evaluation of the path value: '$(OBJPATH)')
 endif
 
+# Now I care about dangerous `rm -rf *`.
+ifeq ($(abspath $(OBJPATH)), $(abspath $(SRCPATH)))
+  $(error :!: Building in source directory. Remember about dangerous 'rm -rf *'.)
+endif
+
 export ARCH AS LD CC OBJCOPY
 export OBJPATH SRCPATH
 
@@ -106,8 +111,10 @@ all: $(obj)/kernel_boot.bin
 $(obj)/os.iso: $(obj)/kernel_boot.bin
 	mkdir -p $(OBJPATH)/iso/boot/grub
 	mv $(OBJPATH)/kernel_boot.bin $(OBJPATH)/iso/boot/kernel_boot.bin
-	grub-file --is-x86-multiboot $(OBJPATH)/iso/boot/kernel_boot.bin \
-		|| echo the file is not multiboot
+	if ! grub-file --is-x86-multiboot $(OBJPATH)/iso/boot/kernel_boot.bin ; then
+		echo 'ERROR: >>> ISO file is not multiboot! <<<'
+		exit 1
+	fi
 	cp $(SRCPATH)/grub.cfg $(OBJPATH)/iso/boot/grub/grub.cfg
 	grub-mkrescue -o $@ $(OBJPATH)/iso
 

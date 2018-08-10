@@ -9,7 +9,7 @@ cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
 
 cmd_ld  = $(CC) $(LDFLAGS) $(LDFLAGS_$(@F)) $^ -o $@
 
-cmd_cc  = $(CC) $(CFLAGS) -c -o $@ $<
+cmd_cc  = $(CC) $(CFLAGS) $(CFLAGS_$(@F)) -c -o $@ $<
 
 cmd_as  = $(AS) $(AFLAGS) -c -o $@ $<
 

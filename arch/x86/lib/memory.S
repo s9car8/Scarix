@@ -1,5 +1,5 @@
 
-// .code16
+.code32
 .section .text
 
 #define GLOBAL(name) \

@@ -113,7 +113,14 @@ void kernel_main(void)
 }
 
 
-void kernel_main_pm()
+void kernel_main_pm(void)
 {
+    start32();
+}
+
+
+void kernel_main_lm(void)
+{
+    terminal_printf("Hello, long mode!\n");
     while (1) terminal_printf("%c", getchar());
 }

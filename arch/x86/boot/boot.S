@@ -5,8 +5,7 @@
 .set MAGIC,     0x1BADB002
 .set CHECKSUM,  -(MAGIC + FLAGS)
 
-
-.section .multiboot
+.section .multiboot, "ad"
 .align 4
 .long MAGIC
 .long FLAGS
@@ -18,6 +17,7 @@ stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
 
+.code32
 .section .text
 .global _start
 .type _start, @function

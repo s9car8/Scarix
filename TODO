@@ -23,6 +23,11 @@
 
 18(19).07.2018
 ---
-- Implement jump to protected mode.
-- Paging.
-- Implement jump to long mode (as Linux insides tutorial have told).
+* Implement jump to protected mode.
+* Paging.
+* Implement jump to long mode (as Linux insides tutorial have told).
+
+9.08.2018
+---
+* Deal with VGA memory mapping and account for this information after enabling paging.
++ Understand talk about PIC from Linux insides tutorial.

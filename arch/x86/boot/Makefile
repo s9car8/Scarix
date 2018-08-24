@@ -1,27 +1,16 @@
 
+
 # Local targets flags.
 # ---------------------
 
-# Specify to use GNU GCC version with C99 standard.
-CFLAGS += -std=gnu99
+CFLAGS += -Iarch/x86/boot
+# Specify target architecture.
+CFLAGS += -m32
+CFLAGS += -fPIC -pie
 
-CFLAGS += -ffreestanding
-
-# Instruct GCC not to use interrupt unsafe 'red zones'.
-CFLAGS += -mno-red-zone
-
-# Disable SSE floating point ops. To protect from #UD and #NM exceptions.
-CFLAGS += -mno-sse
-
-CFLAGS += $(KERNELINCLUDE)
-
-# Enalbe debug stuff.
-CFLAGS += -g3
-
-LDFLAGS	:= -shared -nostdlib -g3
-
-# Don't embed an OS specific CRT.
-LDFLAGS += -ffreestanding
+LDFLAGS := -m elf_i386
+LDFLAGS += -pie --no-dynamic-linker
+LDFLAGS	+= -nostdlib
 
 
 obj		:= $(OBJPATH)/boot

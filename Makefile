@@ -12,16 +12,12 @@ MAKEFLAGS 	= -rR --include-dir=$(CURDIR) # --no-print-directory
 
 # Target arch.
 NATIVE_ARCH := $(shell uname -m | sed -e s/x86_64/x86/)
-ARCH 		?= $(NATIVE_ARCH)
-
-CONFIG_CROSS_COMPILE 	:= ~/opt/cross-gcc/bin/i686-elf-
-# CONFIG_CROSS_COMPILE 	:= ~/opt/cross-gcc/bin/x86_64-elf-
-CROSS_COMPILE			:= $(CONFIG_CROSS_COMPILE)
+ARCH 		:= $(NATIVE_ARCH)
 
 # Make build variables.
-AS 			 = $(CROSS_COMPILE)as
-LD 			 = $(CROSS_COMPILE)ld
-CC 			 = $(CROSS_COMPILE)gcc
+AS 			 = as
+LD 			 = ld
+CC 			 = gcc
 OBJCOPY		 = objcopy
 
 # Gets necessary paths to obj(build)-files and src-files.
@@ -54,27 +50,30 @@ KERNELINCLUDE 	:= \
 
 export KERNELINCLUDE
 
+# CFLAGS, AFLAGS, LDFLAGS specification.
+# --------------------------------------
+
+# Specify to use GNU GCC version with C99 standard.
+CFLAGS += -std=gnu99
+
+# Specify include directories.
+CFLAGS += $(KERNELINCLUDE)
+AFLAGS += $(KERNELINCLUDE)
+
+# Enable debug stuff.
+CFLAgS += -g3
+AFLAGS += -g3
+
+# Don't embed an OS specific CRT.
+CFLAGS += -ffreestanding
+
+# Instruct GCC not to use interrupt unsafe 'red zones'.
+CFLAGS += -mno-red-zone
+
+# Disable SSE floating point ops. To protect from #UD and #NM exceptions.
+CFLAGS += -mno-sse
 
 CFLAGS += -DCONFIG_USE_MULTIBOOT
-AFLAGS += -DCONFIG_USE_MULTIBOOT
-
-export CFLAGS AFLAGS LDFLAGS OBJCOPYFLAGS
-
-# include $(SRCPATH)/arch/$(ARCH)/boot/Makefile
-
-
-$(obj)/kernel_boot.bin: prepare-obj-tree
-	$(MAKE) -f $(SRCPATH)/arch/$(ARCH)/boot/Makefile $@
-
-prepare-obj-tree:
-	mkdir -p $(obj)/boot
-
-
-# A bunch of single target patterns.
-# ----------------------------------
-#
-#  target-dir => where to store output files
-#  build-dir => source code directory
 
 build-dir  = $(patsubst %/,%,$(dir $<))
 target-dir = $(dir $@)
